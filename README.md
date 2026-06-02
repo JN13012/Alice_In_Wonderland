@@ -10,10 +10,10 @@ data/
 └── cache/              -> Résultats déjà calculés
 
 modules/
-├── lexdiv.py           -> Diversité lexicale (tok, typ, hap, ttr, mwl, mwf)
+├── lexdiv.py           -> Diversité lexicale
 ├── topics.py           -> Extraction des thèmes principaux
 ├── entities.py         -> Extraction personnages et lieux
-├── summarize.py        -> Résumé automatique du livre
+├── summarize.py        -> Résumé du livre
 └── card.py             -> Construction de la Book Card finale
 
 utils/
@@ -26,24 +26,6 @@ utils/
 
 utilisation librairie request 
 => plus simple d'ecriture, detecte l'encodage pas besoin de décoder les bytes en utf-8 contrairement à urlib, gestion erreur simplifier. Request > urlib.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
