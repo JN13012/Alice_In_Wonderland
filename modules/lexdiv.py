@@ -4,10 +4,7 @@ def total_number_of_words(words):
 
 
 def total_number_of_unique_words(words):
-    unique_words = []
-    for x in words:
-        if x not in unique_words:
-            unique_words.append(x)
+    unique_words = set(words)
     return len(unique_words)
 
 

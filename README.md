@@ -27,6 +27,10 @@ utils/
 utilisation librairie request 
 => plus simple d'ecriture, detecte l'encodage pas besoin de décoder les bytes en utf-8 contrairement à urlib, gestion erreur simplifier. Request > urlib.
 
+utilisation librairie pathlib
+=> plus facile de gerer les paths quand on les mets en objet 
+
+
 
 
                +----------------+
