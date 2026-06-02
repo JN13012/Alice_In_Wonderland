@@ -1,4 +1,6 @@
-def remove_header(text):
+import re
+
+def remove_header_footer(text):
     header = "*** START OF THE PROJECT GUTENBERG EBOOK"
     footer = "*** END OF THE PROJECT GUTENBERG EBOOK"
     
@@ -20,3 +22,18 @@ def remove_header(text):
        end_index = len(text)
        
     return text[cut_header:end_index].strip()
+
+# Remove \n, extra space and all lower
+def normalize_text(text):
+    text = text.lower()
+    text = text.replace("\n", " ")
+    text = re.sub(r"[^a-z0-9\s]", " ", text)
+    text = " ".join(text.split())
+    
+    return text
+
+def tokenize_words(text):
+    normalized_text = normalize_text(text)
+    words = normalized_text.split()
+    
+    return words
