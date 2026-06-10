@@ -2,7 +2,7 @@ def total_number_of_words(words):
     total = len(words)
     return total
 
-
+# set crée un ensemble sans doublons
 def total_number_of_unique_words(words):
     unique_words = set(words)
     return len(unique_words)
@@ -10,12 +10,13 @@ def total_number_of_unique_words(words):
 
 def number_of_word_occuring_only_once(words):
     word_count = {}
+    # Compte le nombre d'occurence d'un mots.
     for x in words:
         if x not in word_count:
             word_count[x] = 1
         else:
             word_count[x] += 1
-                 
+    # Incrémente hap pour chaque mot dont le nombre d'occurrences vaut 1.
     hap = 0
     for x in word_count.values():
         if x == 1:
@@ -29,6 +30,7 @@ def lexical_diversity(words):
     lexical_diversity = total_number_of_unique_words(words) / total_number_of_words (words)
     return lexical_diversity
 
+# Longueur moyenne d'un mots.
 def mean_word_length(words):
     if total_number_of_words(words) == 0:
         return 0
