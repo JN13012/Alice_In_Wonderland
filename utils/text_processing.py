@@ -39,18 +39,27 @@ def tokenize_words(text):
     
     return words
 
-# Découpe en chapter en fonction du pattern regex [ivxlcdm\d]
+# Découpe en chapter en gardant seulement les vrais blocs de texte.
 def split_chapters(text):
-    pattern = r"(chapter\s+[ivxlcdm\d]+)"
-    parts = re.split(pattern, text, flags=re.IGNORECASE) # re.split = regex of separators, stringToCut, maxsplit=0 (unlimited), flags=(ignore Maj+min) => renvoi toujours index0=texte avant le chapitre sinon "" et commence à index1.
+    pattern = r"^chapter\s+[ivxlcdm\d]+\.?.*$"
+    matches = list(re.finditer(pattern, text, flags=re.IGNORECASE | re.MULTILINE))
 
     chapters = []
 
-    for i in range (1, len(parts) - 1, 2):
-        content = parts[i + 1].strip()
+    for index, match in enumerate(matches):
+        start = match.end()
 
-        if content:
-            chapters.append(content)
+        if index + 1 < len(matches):
+            end = matches[index + 1].start()
+        else:
+            end = len(text)
+
+        title = match.group().strip()
+        content = text[start:end].strip()
+        chapter = f"{title}\n{content}".strip()
+
+        if len(chapter.split()) >= 150:
+            chapters.append(chapter)
     
     return chapters
 
@@ -98,4 +107,3 @@ def split_sentences(text):
             cleaned_sentences.append(sentence)
 
     return cleaned_sentences
-

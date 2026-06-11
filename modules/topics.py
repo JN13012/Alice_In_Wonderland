@@ -1,10 +1,68 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
+from spacy.lang.en.stop_words import STOP_WORDS
 from utils.text_processing import split_sections
 
-def get_topics(text, words_per_section=10):
-    chapters = split_sections(text)
 
-    vectorizer = TfidfVectorizer(stop_words="english") #Crée objet sans les mots inutiles anglais
+CUSTOM_STOP_WORDS = {
+    "answered",
+    "asked",
+    "book",
+    "came",
+    "chapter",
+    "copyright",
+    "couldn",
+    "cried",
+    "didn",
+    "doesn",
+    "don",
+    "ebook",
+    "gutenberg",
+    "http",
+    "https",
+    "isn",
+    "license",
+    "ll",
+    "looked",
+    "project",
+    "re",
+    "replied",
+    "said",
+    "say",
+    "says",
+    "shouldn",
+    "thing",
+    "things",
+    "thought",
+    "time",
+    "ve",
+    "wasn",
+    "way",
+    "went",
+    "weren",
+    "wouldn",
+    "www",
+}
+
+
+def get_topics(text, words_per_section=10):
+    raw_sections = split_sections(text)
+    chapters = []
+
+    for section in raw_sections:
+        if len(section.split()) >= 80:
+            chapters.append(section)
+
+    if not chapters:
+        return {}
+
+    stop_words = list(STOP_WORDS.union(CUSTOM_STOP_WORDS))
+
+    vectorizer = TfidfVectorizer(
+        lowercase=True,
+        max_df=0.9,
+        stop_words=stop_words,
+        token_pattern=r"(?u)\b[a-zA-Z]{3,}\b",
+    ) #Crée objet sans les mots inutiles anglais
     matrix = vectorizer.fit_transform(chapters) # fit => apprend le vocabulaire et transform => matrice tableau
 
     words = vectorizer.get_feature_names_out()
