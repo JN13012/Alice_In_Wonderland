@@ -8,34 +8,24 @@ MAX_ENTITIES = 20
 NLP = None
 
 INVALID_ENTITY_WORDS = {
-    "adventures",
     "chapter",
     "copyright",
     "ebook",
     "gutenberg",
     "latitude",
+    "license",
     "longitude",
     "project",
 }
 
-INVALID_ENTITY_NAMES = {
+INVALID_STANDALONE_NAMES = {
+    "Madam",
     "Majesty",
     "Miss",
+    "Mister",
+    "Mr",
+    "Mrs",
     "Said",
-}
-
-INVALID_LOCATION_NAMES = {
-    "Cat",
-    "Crab",
-    "Dinah",
-    "Duchess",
-    "Esq",
-    "Latin Grammar",
-    "Magpie",
-    "Mouse",
-    "Pigeon",
-    "Tillie",
-    "Tortoise",
 }
 
 
@@ -55,7 +45,11 @@ def load_nlp():
 
 
 # Liste entities
-def get_entities(text):
+def get_entities(text, excluded_names=None):
+    if excluded_names is None:
+        excluded_names = []
+
+    excluded_names = set(excluded_names)
     nlp = load_nlp()
 
     if nlp is None:
@@ -64,6 +58,7 @@ def get_entities(text):
             "locations": [],
         }
 
+    text = remove_heading_lines(text)
     doc = nlp(text)
 
     characters = Counter()
@@ -73,6 +68,9 @@ def get_entities(text):
         name = clean_entity_name(ent.text)
 
         if not is_valid_entity_name(name):
+            continue
+
+        if name in excluded_names:
             continue
 
         if ent.label_ == "PERSON":
@@ -96,6 +94,35 @@ def get_entities(text):
     }
 
 
+def remove_heading_lines(text):
+    cleaned_lines = []
+
+    for line in text.splitlines():
+        stripped_line = line.strip()
+
+        if is_probable_heading(stripped_line):
+            continue
+
+        cleaned_lines.append(line)
+
+    return "\n".join(cleaned_lines)
+
+
+def is_probable_heading(line):
+    if not line:
+        return False
+
+    lowered_line = line.lower()
+
+    if re.match(r"^chapter\s+[ivxlcdm\d]+", lowered_line):
+        return True
+
+    if len(line.split()) <= 6 and line == line.upper():
+        return True
+
+    return False
+
+
 def clean_entity_name(name):
     name = " ".join(name.split())
     name = name.replace("’s", "")
@@ -109,7 +136,10 @@ def is_valid_entity_name(name):
     if len(name) < 3:
         return False
 
-    if name in INVALID_ENTITY_NAMES:
+    if name in INVALID_STANDALONE_NAMES:
+        return False
+
+    if not name[0].isupper():
         return False
 
     if "_" in name:
@@ -119,9 +149,6 @@ def is_valid_entity_name(name):
         return False
 
     lowered_name = name.lower()
-
-    if lowered_name.startswith("the "):
-        return False
 
     for invalid_word in INVALID_ENTITY_WORDS:
         if invalid_word in lowered_name:
@@ -137,9 +164,6 @@ def is_valid_entity_name(name):
 
 
 def is_valid_location_name(name):
-    if name in INVALID_LOCATION_NAMES:
-        return False
-
     if not name[0].isupper():
         return False
 
