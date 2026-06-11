@@ -121,12 +121,14 @@ def get_book_info(book_id):
         info = BOOK_COLLECTION[book_id]
         return {
             "id": book_id,
+            "title": info["title"],
             "authors": info["authors"],
             "bookshelves": info["bookshelves"],
         }
 
     return {
         "id": book_id,
+        "title": "Unknown",
         "authors": "Unknown",
         "bookshelves": "Unknown",
     }

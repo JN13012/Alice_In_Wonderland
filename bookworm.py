@@ -106,7 +106,7 @@ def topics (book_id):
     print (result)
 
 def entities(book_id):
-    cached = load_cache(book_id, "entities_v10")
+    cached = load_cache(book_id, "entities_v11")
     if cached is not None:
         print(cached)
         return
@@ -114,19 +114,20 @@ def entities(book_id):
     cut_text = get_clean_book(book_id)
     info = get_book_info(book_id)
     result = get_entities(cut_text, [info["authors"]])
-    save_cache(book_id, "entities_v10", result)
+    save_cache(book_id, "entities_v11", result)
 
     print(result)
 
 def summarize(book_id):
-    cached = load_cache(book_id, "summary_hybrid_v3")
+    cached = load_cache(book_id, "summary_hybrid_v7")
     if cached is not None:
         print(cached)
         return
 
     cut_text = get_clean_book(book_id)
-    result = get_summary(cut_text)
-    save_cache(book_id, "summary_hybrid_v3", result)
+    info = get_book_info(book_id)
+    result = get_summary(cut_text, info)
+    save_cache(book_id, "summary_hybrid_v7", result)
 
     print(result)
 
@@ -141,7 +142,7 @@ def similar(book_id):
     print(result)
 
 def card(book_id):
-    cached = load_cache(book_id, "card_v12")
+    cached = load_cache(book_id, "card_v16")
     if cached is not None:
         if "topics" in cached:
             cached["topics"] = {int(section): words for section, words in cached["topics"].items()}
@@ -165,15 +166,15 @@ def card(book_id):
 
     info = get_book_info(book_id)
 
-    entities_result = load_cache(book_id, "entities_v10")
+    entities_result = load_cache(book_id, "entities_v11")
     if entities_result is None:
         entities_result = get_entities(cut_text, [info["authors"]])
-        save_cache(book_id, "entities_v10", entities_result)
+        save_cache(book_id, "entities_v11", entities_result)
 
-    summary_result = load_cache(book_id, "summary_hybrid_v3")
+    summary_result = load_cache(book_id, "summary_hybrid_v7")
     if summary_result is None:
-        summary_result = get_summary(cut_text)
-        save_cache(book_id, "summary_hybrid_v3", summary_result)
+        summary_result = get_summary(cut_text, info, entities_result, topics_result)
+        save_cache(book_id, "summary_hybrid_v7", summary_result)
 
     similar_result = load_cache(book_id, "similar")
     if similar_result is None:
@@ -189,7 +190,7 @@ def card(book_id):
         similar_result,
         info,
     )
-    save_cache(book_id, "card_v12", result)
+    save_cache(book_id, "card_v16", result)
     print(result)
 
     

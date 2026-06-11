@@ -4,7 +4,7 @@ from collections import Counter
 import spacy
 
 
-MAX_ENTITIES = 20
+DEFAULT_ENTITY_LIMIT = 10
 NLP = None
 
 INVALID_ENTITY_WORDS = {
@@ -45,7 +45,7 @@ def load_nlp():
 
 
 # Liste entities
-def get_entities(text, excluded_names=None):
+def get_entities(text, excluded_names=None, limit=DEFAULT_ENTITY_LIMIT):
     if excluded_names is None:
         excluded_names = []
 
@@ -89,8 +89,8 @@ def get_entities(text, excluded_names=None):
             filtered_locations.append(name)
 
     return {
-        "characters": character_names[:MAX_ENTITIES],
-        "locations": filtered_locations[:MAX_ENTITIES],
+        "characters": character_names[:limit],
+        "locations": filtered_locations[:limit],
     }
 
 
