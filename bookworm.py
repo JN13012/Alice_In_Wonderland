@@ -132,17 +132,17 @@ def summarize(book_id):
     print(result)
 
 def similar(book_id):
-    cached = load_cache(book_id, "similar")
+    cached = load_cache(book_id, "similar_v2")
     if cached is not None:
         print(cached)
         return
 
     result = get_similar_books(book_id)
-    save_cache(book_id, "similar", result)
+    save_cache(book_id, "similar_v2", result)
     print(result)
 
 def card(book_id):
-    cached = load_cache(book_id, "card_v16")
+    cached = load_cache(book_id, "card_v17")
     if cached is not None:
         if "topics" in cached:
             cached["topics"] = {int(section): words for section, words in cached["topics"].items()}
@@ -176,10 +176,10 @@ def card(book_id):
         summary_result = get_summary(cut_text, info, entities_result, topics_result)
         save_cache(book_id, "summary_hybrid_v7", summary_result)
 
-    similar_result = load_cache(book_id, "similar")
+    similar_result = load_cache(book_id, "similar_v2")
     if similar_result is None:
         similar_result = get_similar_books(book_id)
-        save_cache(book_id, "similar", similar_result)
+        save_cache(book_id, "similar_v2", similar_result)
 
     result = build_card(
         book_id,
@@ -190,7 +190,7 @@ def card(book_id):
         similar_result,
         info,
     )
-    save_cache(book_id, "card_v16", result)
+    save_cache(book_id, "card_v17", result)
     print(result)
 
     

@@ -1,8 +1,22 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from spacy.lang.en.stop_words import STOP_WORDS
 
 from utils.gutenberg import load_book
 from utils.text_processing import remove_header_footer
+
+
+CUSTOM_STOP_WORDS = {
+    "chapter",
+    "copyright",
+    "ebook",
+    "gutenberg",
+    "http",
+    "https",
+    "license",
+    "project",
+    "www",
+}
 
 
 BOOK_COLLECTION = {
@@ -148,7 +162,15 @@ def get_similar_books(book_id, limit=5):
         clean_text = remove_header_footer(text)
         documents.append(clean_text)
 
-    vectorizer = TfidfVectorizer(stop_words="english", max_features=5000)
+    stop_words = list(STOP_WORDS.union(CUSTOM_STOP_WORDS))
+
+    vectorizer = TfidfVectorizer(
+        lowercase=True,
+        max_df=0.9,
+        max_features=8000,
+        stop_words=stop_words,
+        token_pattern=r"(?u)\b[a-zA-Z]{3,}\b",
+    )
     matrix = vectorizer.fit_transform(documents)
 
     target_index = ids.index(book_id)
